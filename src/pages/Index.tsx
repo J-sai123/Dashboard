@@ -1,13 +1,39 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React, { useState } from 'react';
+import Layout from '@/components/Layout';
+import Dashboard from '@/components/Dashboard';
+import Holdings from '@/components/Holdings';
+import Positions from '@/components/Positions';
+import Funds from '@/components/Funds';
+import Orders from '@/components/Orders';
+import Apps from '@/components/Apps';
 
 const Index = () => {
+  const [currentPage, setCurrentPage] = useState('dashboard');
+
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'dashboard':
+        return <Dashboard />;
+      case 'orders':
+        return <Orders />;
+      case 'holdings':
+        return <Holdings />;
+      case 'positions':
+        return <Positions />;
+      case 'funds':
+        return <Funds />;
+      case 'apps':
+        return <Apps />;
+      default:
+        return <Dashboard />;
+    }
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <Layout currentPage={currentPage} onPageChange={setCurrentPage}>
+      {renderPage()}
+    </Layout>
   );
 };
 
