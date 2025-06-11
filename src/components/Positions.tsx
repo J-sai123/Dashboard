@@ -1,35 +1,15 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { positionsData, calculatePositionsSummary } from '@/data';
 
 const Positions = () => {
-  const positionsData = [
-    {
-      product: 'CNC',
-      instrument: 'EVEREADY',
-      qty: 2,
-      avg: 316.27,
-      ltp: 312.35,
-      pnl: -7.84,
-      chg: -1.24
-    },
-    {
-      product: 'CNC',
-      instrument: 'JUBLFOOD',
-      qty: 1,
-      avg: 3124.75,
-      ltp: 3082.65,
-      pnl: -42.10,
-      chg: -1.35
-    }
-  ];
-
-  const totalPnL = positionsData.reduce((sum, position) => sum + position.pnl, 0);
+  const summary = calculatePositionsSummary(positionsData);
 
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-foreground">Positions (2)</h1>
+        <h1 className="text-2xl font-semibold text-foreground">Positions ({summary.totalPositions})</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
@@ -84,9 +64,9 @@ const Positions = () => {
           <div className="flex justify-end">
             <div className={cn(
               "font-semibold text-lg",
-              totalPnL >= 0 ? "text-green-600" : "text-red-600"
+              summary.totalPnL >= 0 ? "text-green-600" : "text-red-600"
             )}>
-              Total P&L: {totalPnL >= 0 ? '+' : ''}₹{totalPnL.toFixed(2)}
+              Total P&L: {summary.totalPnL >= 0 ? '+' : ''}₹{summary.totalPnL.toFixed(2)}
             </div>
           </div>
         </div>

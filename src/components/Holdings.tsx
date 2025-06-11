@@ -1,89 +1,15 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { holdingsData, calculateHoldingsSummary } from '@/data';
 
 const Holdings = () => {
-  const holdingsData = [
-    {
-      instrument: 'BHARTIARTL',
-      qty: 2,
-      avgCost: 538.05,
-      ltp: 541.15,
-      curVal: 1082.30,
-      pnl: 6.20,
-      netChg: 0.38,
-      dayChg: 0.56
-    },
-    {
-      instrument: 'HDFCBANK',
-      qty: 2,
-      avgCost: 1383.40,
-      ltp: 1522.35,
-      curVal: 3044.70,
-      pnl: 277.90,
-      netChg: 10.04,
-      dayChg: 0.11
-    },
-    {
-      instrument: 'HINDUNILVR',
-      qty: 1,
-      avgCost: 2335.85,
-      ltp: 2417.40,
-      curVal: 2417.40,
-      pnl: 81.55,
-      netChg: 3.49,
-      dayChg: 0.21
-    },
-    {
-      instrument: 'ITC',
-      qty: 5,
-      avgCost: 455.20,
-      ltp: 462.85,
-      curVal: 2314.25,
-      pnl: 38.25,
-      netChg: 1.68,
-      dayChg: 0.43
-    },
-    {
-      instrument: 'RELIANCE',
-      qty: 1,
-      avgCost: 2089.75,
-      ltp: 2112.40,
-      curVal: 2112.40,
-      pnl: 22.65,
-      netChg: 1.08,
-      dayChg: 1.44
-    },
-    {
-      instrument: 'TATASTEEL',
-      qty: 3,
-      avgCost: 125.30,
-      ltp: 128.95,
-      curVal: 386.85,
-      pnl: 10.95,
-      netChg: 2.91,
-      dayChg: -0.23
-    },
-    {
-      instrument: 'INFY',
-      qty: 1,
-      avgCost: 1578.90,
-      ltp: 1555.45,
-      curVal: 1555.45,
-      pnl: -23.45,
-      netChg: -1.49,
-      dayChg: -1.60
-    }
-  ];
-
-  const totalInvestment = holdingsData.reduce((sum, holding) => sum + (holding.avgCost * holding.qty), 0);
-  const totalCurrentValue = holdingsData.reduce((sum, holding) => sum + holding.curVal, 0);
-  const totalPnL = totalCurrentValue - totalInvestment;
+  const summary = calculateHoldingsSummary(holdingsData);
 
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-foreground">Holdings (13)</h1>
+        <h1 className="text-2xl font-semibold text-foreground">Holdings ({holdingsData.length})</h1>
       </div>
 
       <div className="bg-white rounded-lg shadow-sm border border-border overflow-hidden">
@@ -142,18 +68,18 @@ const Holdings = () => {
             <div className="flex space-x-8">
               <div>
                 <span className="text-muted-foreground">Total investment: </span>
-                <span className="font-semibold">₹{totalInvestment.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+                <span className="font-semibold">₹{summary.totalInvestment.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
               </div>
               <div>
                 <span className="text-muted-foreground">Current value: </span>
-                <span className="font-semibold">₹{totalCurrentValue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
+                <span className="font-semibold">₹{summary.totalCurrentValue.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</span>
               </div>
             </div>
             <div className={cn(
               "font-semibold",
-              totalPnL >= 0 ? "text-green-600" : "text-red-600"
+              summary.totalPnL >= 0 ? "text-green-600" : "text-red-600"
             )}>
-              Total P&L: {totalPnL >= 0 ? '+' : ''}₹{totalPnL.toFixed(2)}
+              Total P&L: {summary.totalPnL >= 0 ? '+' : ''}₹{summary.totalPnL.toFixed(2)}
             </div>
           </div>
         </div>
