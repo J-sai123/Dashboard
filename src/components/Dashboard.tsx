@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUp } from 'lucide-react';
+import { Link, TrendingUp } from 'lucide-react';
 
 const Dashboard = () => {
   return (
@@ -63,18 +63,26 @@ const Dashboard = () => {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow cursor-pointer">
+       <Link to="/orders" className="block">
           <h3 className="font-medium mb-2">Orders</h3>
           <p className="text-sm text-muted-foreground">View and manage your orders</p>
+       </Link>
         </div>
         
         <div className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow cursor-pointer">
+          <Link to="/positions" className="block">
           <h3 className="font-medium mb-2">Positions</h3>
           <p className="text-sm text-muted-foreground">Track your current positions</p>
+      </Link>
         </div>
         
+        
         <div className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow cursor-pointer">
+        <Link to="/funds" className="block">
           <h3 className="font-medium mb-2">Funds</h3>
+         
           <p className="text-sm text-muted-foreground">Manage your trading funds</p>
+        </Link>
         </div>
       </div>
     </div>
