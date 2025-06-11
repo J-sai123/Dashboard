@@ -1,6 +1,8 @@
 
 import React from 'react';
-import { Link, TrendingUp } from 'lucide-react';
+import { TrendingUp } from 'lucide-react';
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+
 
 const Dashboard = () => {
   return (
@@ -78,7 +80,7 @@ const Dashboard = () => {
         
         
         <div className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow cursor-pointer">
-        <Link to="/funds" className="block">
+        <Link to="/Funds" className="block">
           <h3 className="font-medium mb-2">Funds</h3>
          
           <p className="text-sm text-muted-foreground">Manage your trading funds</p>
