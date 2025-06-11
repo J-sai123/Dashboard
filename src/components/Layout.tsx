@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, TrendingUp, TrendingDown } from 'lucide-react';
+import { Search, TrendingUp, TrendingDown, ShoppingCart, DollarSign, BarChart3, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface LayoutProps {
@@ -41,6 +41,11 @@ const Layout = ({ children, currentPage, onPageChange }: LayoutProps) => {
     { id: 'funds', label: 'Funds' },
     { id: 'apps', label: 'Apps' }
   ];
+
+  const handleStockAction = (action: string, symbol: string) => {
+    console.log(`${action} action for ${symbol}`);
+    // Here you can add actual functionality for each action
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -110,7 +115,7 @@ const Layout = ({ children, currentPage, onPageChange }: LayoutProps) => {
             {filteredStocks.map((stock) => (
               <div
                 key={stock.symbol}
-                className="flex items-center justify-between p-2 hover:bg-muted/50 rounded cursor-pointer transition-colors"
+                className="group relative flex items-center justify-between p-2 hover:bg-muted/50 rounded cursor-pointer transition-colors"
               >
                 <div className="flex items-center space-x-2">
                   <span className="font-medium text-sm">{stock.symbol}</span>
@@ -128,6 +133,38 @@ const Layout = ({ children, currentPage, onPageChange }: LayoutProps) => {
                   )}>
                     {stock.change > 0 ? '+' : ''}{stock.change.toFixed(2)}%
                   </div>
+                </div>
+
+                {/* Hover Actions */}
+                <div className="absolute inset-0 bg-white/95 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center space-x-2 rounded">
+                  <button
+                    onClick={() => handleStockAction('buy', stock.symbol)}
+                    className="p-2 bg-green-600 hover:bg-green-700 text-white rounded-md transition-colors"
+                    title="Buy"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => handleStockAction('sell', stock.symbol)}
+                    className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-md transition-colors"
+                    title="Sell"
+                  >
+                    <DollarSign className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => handleStockAction('graph', stock.symbol)}
+                    className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+                    title="View Chart"
+                  >
+                    <BarChart3 className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => handleStockAction('delete', stock.symbol)}
+                    className="p-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md transition-colors"
+                    title="Remove from Watchlist"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
             ))}
