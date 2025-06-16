@@ -1,10 +1,35 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { holdingsData, calculateHoldingsSummary } from '@/data';
+import axios from 'axios';
 
 const Holdings = () => {
-  const summary = calculateHoldingsSummary(holdingsData);
+  const [holdingsData, setHoldingsData] = useState([]);
+  const [summary, setSummary] = useState({
+    totalInvestment: 0,
+    totalCurrentValue: 0,
+    totalPnL: 0,
+  });
+
+  useEffect(() => {
+    const fetchHoldings = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/holdings');
+        setHoldingsData(response.data);
+        calculateSummary(response.data);
+      } catch (error) {
+        console.error('Error fetching holdings:', error);
+      }
+    };
+
+    fetchHoldings();
+  }, []);
+
+  const calculateSummary = (data) => {
+    const totalInvestment = data.reduce((sum, h) => sum + (h.avgCost * h.qty), 0);
+    const totalCurrentValue = data.reduce((sum, h) => sum + h.curVal, 0);
+    const totalPnL = data.reduce((sum, h) => sum + h.pnl, 0);
+    setSummary({ totalInvestment, totalCurrentValue, totalPnL });
+  };
 
   return (
     <div className="p-6">
@@ -29,7 +54,7 @@ const Holdings = () => {
             </thead>
             <tbody>
               {holdingsData.map((holding, index) => (
-                <tr key={holding.instrument} className={cn(
+                <tr key={holding._id} className={cn(
                   "border-t border-border hover:bg-muted/30 transition-colors",
                   index % 2 === 0 ? "bg-white" : "bg-muted/10"
                 )}>

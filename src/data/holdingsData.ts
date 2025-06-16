@@ -77,7 +77,7 @@ export const holdingsData: Holding[] = [
   },
   {
     instrument: 'INFY',
-    qty: 1,
+    qty: 6,
     avgCost: 1578.90,
     ltp: 1555.45,
     curVal: 1555.45,
