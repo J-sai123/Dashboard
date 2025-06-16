@@ -70,6 +70,12 @@ const Dashboard = () => {
           <p className="text-sm text-muted-foreground">View and manage your orders</p>
        </Link>
         </div>
+        <div className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow cursor-pointer">
+          <Link to="/holdings" className="block">
+          <h3 className="font-medium mb-2">Holdings</h3>
+          <p className="text-sm text-muted-foreground">See your all Holdings</p>
+      </Link>
+        </div>
         
         <div className="bg-white rounded-lg shadow-sm border border-border p-4 hover:shadow-md transition-shadow cursor-pointer">
           <Link to="/positions" className="block">

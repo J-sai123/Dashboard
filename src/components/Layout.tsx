@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { Search, TrendingUp, TrendingDown, ShoppingCart, DollarSign, BarChart3, Trash2 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Search, TrendingUp, TrendingDown, ShoppingCart, DollarSign, BarChart3, Trash2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { watchlistStocks, marketIndices } from '@/data';
+import axios from 'axios';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -9,8 +10,23 @@ interface LayoutProps {
   onPageChange: (page: string) => void;
 }
 
+interface BuyOrderForm {
+  symbol: string;
+  currentPrice: number;
+  quantity: number;
+  price: number;
+}
+
 const Layout = ({ children, currentPage, onPageChange }: LayoutProps) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [buyOrderForm, setBuyOrderForm] = useState<BuyOrderForm | null>(null);
+
+  // Helper to update buyOrderForm fields
+  const updateOrderForm = (field: keyof BuyOrderForm, value: number) => {
+    setBuyOrderForm((prev) =>
+      prev ? { ...prev, [field]: value } : prev
+    );
+  };
 
   const filteredStocks = watchlistStocks.filter(stock =>
     stock.symbol.toLowerCase().includes(searchQuery.toLowerCase())
@@ -26,12 +42,133 @@ const Layout = ({ children, currentPage, onPageChange }: LayoutProps) => {
   ];
 
   const handleStockAction = (action: string, symbol: string) => {
-    console.log(`${action} action for ${symbol}`);
-    // Here you can add actual functionality for each action
+    if (action === 'buy') {
+      const stock = watchlistStocks.find(s => s.symbol === symbol);
+      if (stock) {
+        setBuyOrderForm({
+          symbol: symbol,
+          currentPrice: stock.price,
+          quantity: 1,
+          price: stock.price
+        });
+      }
+    } else {
+      console.log(`${action} action for ${symbol}`);
+      // Here you can add actual functionality for each action
+    }
   };
+
+ const handleBuyOrder = async () => {
+  if (buyOrderForm) {
+    try {
+      const response = await axios.post(
+        "http://localhost:3002/orders",
+        {
+          userId: "USER123",
+          instrument: buyOrderForm.symbol,
+          product: "MIS", // or "CNC", based on your logic
+          qty: buyOrderForm.quantity,
+          orderType: "BUY",
+          price: buyOrderForm.price,
+          status: "Pending" // or "Completed", etc.
+        },
+        {
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+
+      if (response.status !== 201) {
+        console.error("Backend Error:", response.data);
+        alert(response.data.error || "An error occurred");
+        return;
+      }
+
+      alert("Buy order placed successfully!");
+      setBuyOrderForm(null); // close the modal
+    } catch (err) {
+      console.error("Network or CORS error:", err);
+      alert("An error occurred while placing the order.");
+    }
+  }
+};
+
+
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      {/* Buy Order Modal */}
+      {buyOrderForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Buy {buyOrderForm.symbol}</h3>
+              <button
+                onClick={() => setBuyOrderForm(null)}
+                className="p-1 hover:bg-gray-100 rounded"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Quantity
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={buyOrderForm.quantity}
+                  onChange={(e) => updateOrderForm('quantity', parseInt(e.target.value) || 1)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Price (₹)
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={buyOrderForm.price}
+                  onChange={(e) => updateOrderForm('price', parseFloat(e.target.value) || 0)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Current Price: ₹{buyOrderForm.currentPrice.toFixed(2)}
+                </p>
+              </div>
+              
+              <div className="bg-gray-50 p-3 rounded-md">
+                <div className="flex justify-between text-sm">
+                  <span>Total Amount:</span>
+                  <span className="font-medium">
+                    ₹{(buyOrderForm.quantity * buyOrderForm.price).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+              
+              <div className="flex space-x-3 pt-2">
+                <button
+                  onClick={handleBuyOrder}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md font-medium transition-colors"
+                >
+                  Buy
+                </button>
+                <button
+  onClick={() => setBuyOrderForm(null)} // ✅ Just close modal
+  className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md font-medium transition-colors"
+>
+  Cancel
+</button>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-white border-b border-border h-16 flex items-center justify-between px-6 shadow-sm">
         <div className="flex items-center space-x-8">
